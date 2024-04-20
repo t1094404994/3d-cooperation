@@ -39,9 +39,24 @@ export async function main(gl: WebGL2RenderingContext) {
   gl.enableVertexAttribArray(texcoordAttributeLocation);
   const texcoordBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+  //fit模式测试 宽度填满
+  const heightAspect = image.width / image.height;
   gl.bufferData(
     gl.ARRAY_BUFFER,
-    new Float32Array([0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1]),
+    new Float32Array([
+      0,
+      0,
+      0,
+      heightAspect,
+      1,
+      heightAspect,
+      0,
+      0,
+      1,
+      0,
+      1,
+      heightAspect,
+    ]),
     gl.STATIC_DRAW
   );
   gl.vertexAttribPointer(texcoordAttributeLocation, 2, gl.FLOAT, false, 0, 0);
