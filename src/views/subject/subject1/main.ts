@@ -142,7 +142,6 @@ export function render(gl: WebGL2RenderingContext, effectsList: EffectList) {
     gl.uniform1fv(kernelLocation, kernels[name]);
     gl.uniform1f(kernelWeightLocation, computeKernelWeight(kernels[name]));
     gl.drawArrays(gl.TRIANGLES, 0, 6);
-    console.log(name);
   }
 
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
