@@ -70,15 +70,13 @@ function render(
   const moveOriginMatrix = translation(-50, -75);
   let matrix = identity();
   matrix = multiply(matrix, projectionMatrix);
-  for (let i = 0; i < 5; i++) {
-    matrix = multiply(matrix, translationMatrix);
-    matrix = multiply(matrix, rotationMatrix);
-    matrix = multiply(matrix, scaleMatrix);
-    matrix = multiply(matrix, moveOriginMatrix);
-    gl.uniformMatrix3fv(matrixLocation, false, matrix);
-    gl.drawArrays(gl.TRIANGLES, 0, 18);
-  }
-  requestAnimationFrame(() => render(gl, matrixLocation, randomConfig()));
+  matrix = multiply(matrix, translationMatrix);
+  matrix = multiply(matrix, rotationMatrix);
+  matrix = multiply(matrix, scaleMatrix);
+  matrix = multiply(matrix, moveOriginMatrix);
+  gl.uniformMatrix3fv(matrixLocation, false, matrix);
+  gl.drawArrays(gl.TRIANGLES, 0, 18);
+  // requestAnimationFrame(() => render(gl, matrixLocation, randomConfig()));
 }
 
 type Martix3 = [

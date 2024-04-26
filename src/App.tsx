@@ -1,6 +1,5 @@
 import "./App.css";
 import Learn from "./views/learn/Learn";
-// import Subject from "./views/subject/Subject";
 function App() {
   return (
     <>
