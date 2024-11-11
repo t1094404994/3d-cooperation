@@ -180,3 +180,10 @@ export function createVAO(gl: WebGL2RenderingContext, bufferInfo: BufferInfo) {
   gl.bindVertexArray(null);
   return vao;
 }
+
+// //将三角形方向变成逆时针
+// export function makeReverseTriangleCulling(gl: WebGL2RenderingContext) {
+//   gl.frontFace(gl.CW);
+//   gl.cullFace(gl.BACK);
+//   gl.enable(gl.CULL_FACE);
+// }

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { main } from "./class9/main";
+import { main } from "./class5/main";
 
 export default function Learn() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

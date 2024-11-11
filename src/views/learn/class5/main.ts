@@ -54,26 +54,21 @@ function render(
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.CULL_FACE);
   gl.enable(gl.DEPTH_TEST);
-  let matrix = projection(gl.canvas.width, gl.canvas.height, 400);
-  matrix = translate(
-    matrix,
-    config.translation[0],
-    config.translation[1],
-    config.translation[2]
-  );
-  matrix = xRotate(matrix, config.rotation[0]);
-  matrix = yRotate(matrix, config.rotation[1]);
-  matrix = zRotate(matrix, config.rotation[2]);
-  matrix = scale(matrix, config.scale[0], config.scale[1], config.scale[2]);
+  let matrix = projection(gl.canvas.width, gl.canvas.height, 100);
+  // matrix = translate(matrix, 100, 100, 0);
+  // matrix = xRotate(matrix, Math.PI / 8);
+  matrix = yRotate(matrix, Math.PI / 8);
+  // matrix = zRotate(matrix, Math.PI / 8);
+  // matrix = scale(matrix, config.scale[0], config.scale[1], config.scale[2]);
   gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
   const primitiveType = gl.TRIANGLES;
   const offset = 0;
   const count = 16 * 6;
   gl.drawArrays(primitiveType, offset, count);
-  setTimeout(() => {
-    render(gl, matrixLocation, randomConfig());
-  }, 1000);
+  // setTimeout(() => {
+  //   render(gl, matrixLocation, randomConfig());
+  // }, 1000);
 }
 
 function randomConfig(): Config {

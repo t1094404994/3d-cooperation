@@ -272,7 +272,7 @@ function setGeometry(gl: WebGL2RenderingContext) {
   // We could do by changing all the values above but I'm lazy.
   // We could also do it with a matrix at draw time but you should
   // never do stuff at draw time if you can do it at init time.
-  let matrix2 = M4.xRotation(Math.PI);
+  const matrix2 = M4.xRotation(Math.PI);
   matrix = M4.translate(matrix, -50, -75, -15);
 
   for (let ii = 0; ii < positions2.length; ii += 3) {
