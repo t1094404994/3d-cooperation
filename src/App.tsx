@@ -9,7 +9,7 @@ function App() {
       </header>
       <main>
         <Subject />
-        <Learn />
+        {/* <Learn /> */}
       </main>
     </>
   );

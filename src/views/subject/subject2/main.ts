@@ -86,7 +86,7 @@ export function main(gl: WebGL2RenderingContext) {
     // matrix[14] = 0.9;
     // matrix[15] = 1 - 150 / depth;
     //旋转中心
-    // mat4.rotateX(matrix, matrix, rotate);
+    mat4.rotateX(matrix, matrix, rotate);
     // mat4.rotateX(matrix, matrix, Math.PI / 8);
     // mat4.rotateY(matrix, matrix, rotate);
     // mat4.rotateZ(matrix, matrix, rotate);

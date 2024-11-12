@@ -14,4 +14,13 @@ export default defineConfig({
     ],
     extensions: [".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
   },
+  optimizeDeps: {
+    esbuildOptions: {
+      tsconfigRaw: {
+        compilerOptions: {
+          experimentalDecorators: true,
+        }
+      }
+    }
+  },
 });
