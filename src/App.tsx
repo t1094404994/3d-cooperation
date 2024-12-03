@@ -9,6 +9,13 @@ function App() {
       </header>
       <main>
         <Subject />
+        <div
+          style={{
+            width: "300px",
+            height: "240px",
+            background: "linear-gradient(#ff00ff, #00ff00)",
+          }}
+        ></div>
         {/* <Learn /> */}
       </main>
     </>

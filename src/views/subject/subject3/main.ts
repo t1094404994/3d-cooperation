@@ -23,9 +23,9 @@ export function main(gl: WebGL2RenderingContext) {
   gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
   const startColorLocation = gl.getUniformLocation(program, "u_start_color");
-  gl.uniform4fv(startColorLocation, [0.2, 1, 0.2, 1]);
+  gl.uniform4fv(startColorLocation, [0, 1, 0, 1]);
   const endColorLocation = gl.getUniformLocation(program, "u_end_color");
-  gl.uniform4fv(endColorLocation, [1, 0.2, 1, 1]);
+  gl.uniform4fv(endColorLocation, [1, 0, 1, 1]);
   const lengthLocation = gl.getUniformLocation(program, "u_length");
   gl.uniform1f(lengthLocation, Math.sqrt(2));
   gl.uniform1f(gl.getUniformLocation(program, "u_width"), 1);
