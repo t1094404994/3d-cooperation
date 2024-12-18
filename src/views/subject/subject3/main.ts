@@ -2,47 +2,62 @@ import { initShaderProgram } from "@/util/webgl";
 import fsSource from "./fs.frag?raw";
 import vsSource from "./vs.vert?raw";
 import { ReadonlyVec3 } from "gl-matrix";
+import { rangeMapping } from "@/util/math";
 export function main(gl: WebGL2RenderingContext) {
   const program = initShaderProgram(gl, vsSource, fsSource);
   if (!program) return;
+  const canvasWidth = gl.canvas.width;
+  const canvasHeight = gl.canvas.height;
   gl.useProgram(program);
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.viewport(0, 0, canvasWidth, canvasHeight);
 
   const vao = gl.createVertexArray();
   gl.bindVertexArray(vao);
-  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-  gl.enableVertexAttribArray(positionAttributeLocation);
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  const pt1: ReadonlyVec3 = [-0.5, 0.5, 0];
-  const pt2: ReadonlyVec3 = [0.5, 0.5, 0];
-  const pt3: ReadonlyVec3 = [-0.5, -0.5, 0];
-  const pt4: ReadonlyVec3 = [0.5, -0.5, 0];
-  const postions = [...pt1, ...pt3, ...pt2, ...pt2, ...pt3, ...pt4];
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(postions), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
-
-  const startColorLocation = gl.getUniformLocation(program, "u_start_color");
-  gl.uniform4fv(startColorLocation, [0, 1, 0, 1]);
-  const endColorLocation = gl.getUniformLocation(program, "u_end_color");
-  gl.uniform4fv(endColorLocation, [1, 0, 1, 1]);
-  const lengthLocation = gl.getUniformLocation(program, "u_length");
-  gl.uniform1f(lengthLocation, Math.sqrt(2));
-  gl.uniform1f(gl.getUniformLocation(program, "u_width"), 1);
-  gl.uniform3fv(gl.getUniformLocation(program, "u_start_pt"), pt1);
-
+  function drawRect(x: number, y: number, width: number, height: number) {
+    const positionAttributeLocation = gl.getAttribLocation(
+      program!,
+      "a_position"
+    );
+    gl.enableVertexAttribArray(positionAttributeLocation);
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    //
+    const pt1 = [
+      rangeMapping(x, 0, canvasWidth, -1, 1),
+      rangeMapping(y, 0, canvasHeight, 1, -1),
+      0,
+    ];
+    const pt2 = [
+      rangeMapping(x + width, 0, canvasWidth, -1, 1),
+      rangeMapping(y, 0, canvasHeight, 1, -1),
+      0,
+    ];
+    const pt3 = [
+      rangeMapping(x, 0, canvasWidth, -1, 1),
+      rangeMapping(y + height, 0, canvasHeight, 1, -1),
+      0,
+    ];
+    const pt4 = [
+      rangeMapping(x + width, 0, canvasWidth, -1, 1),
+      rangeMapping(y + height, 0, canvasHeight, 1, -1),
+      0,
+    ];
+    const postions = [...pt1, ...pt3, ...pt2, ...pt2, ...pt3, ...pt4];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(postions), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+    const l = Math.floor(postions.length / 3 / 3);
+    for (let i = 0; i < l; i++) {
+      gl.drawArrays(gl.TRIANGLES, i * 3, 3);
+    }
+  }
   function render() {
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
     gl.useProgram(program);
-    // gl.drawArrays(gl.TRIANGLES, 0, 3);
-    // gl.drawArrays(gl.TRIANGLES, 3, 3);
-    const l = Math.floor(postions.length / 3 / 3);
-    for (let i = 0; i < l; i++) {
-      gl.drawArrays(gl.TRIANGLES, i * 3, 3);
-    }
+    drawRect(canvasWidth / 2 - 150, canvasHeight / 2 - 150, 300, 300);
+    // drawRect(0, 0, 300, 300);
   }
   render();
 }
