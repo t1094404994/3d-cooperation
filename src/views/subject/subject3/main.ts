@@ -56,8 +56,8 @@ export function main(gl: WebGL2RenderingContext) {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
     gl.useProgram(program);
-    drawRect(canvasWidth / 2 - 150, canvasHeight / 2 - 150, 300, 300);
-    // drawRect(0, 0, 300, 300);
+    drawRect(canvasWidth / 2 - 150, canvasHeight / 2 - 150, 100, 100);
+    drawRect(0, 0, 100, 50);
   }
   render();
 }
