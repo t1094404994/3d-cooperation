@@ -2,7 +2,7 @@ import { initShaderProgram } from "@/util/webgl";
 import fsSource from "./fs.frag?raw";
 import vsSource from "./vs.vert?raw";
 import { ReadonlyVec3 } from "gl-matrix";
-import { rangeMapping } from "@/util/math";
+import { linearGradientColor, rangeMapping } from "@/util/math";
 export function main(gl: WebGL2RenderingContext) {
   const program = initShaderProgram(gl, vsSource, fsSource);
   if (!program) return;
@@ -45,6 +45,45 @@ export function main(gl: WebGL2RenderingContext) {
     const postions = [...pt1, ...pt3, ...pt2, ...pt2, ...pt3, ...pt4];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(postions), gl.STATIC_DRAW);
     gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+
+    //test
+    const startColorLocation = gl.getUniformLocation(program!, "u_start_color");
+    const endColorLocation = gl.getUniformLocation(program!, "u_end_color");
+    const startColor: [number, number, number] = [
+      Math.random(),
+      Math.random(),
+      Math.random(),
+    ];
+    const endColor: [number, number, number] = [
+      Math.random(),
+      Math.random(),
+      Math.random(),
+    ];
+    console.log("start color", startColor);
+    console.log("end color", endColor);
+    gl.uniform3fv(startColorLocation, startColor);
+    gl.uniform3fv(endColorLocation, endColor);
+    const startPt = [Math.random() * 2 - 1, Math.random() * 2 - 1, 0];
+    const endPt = [Math.random() * 2 - 1, Math.random() * 2 - 1, 0];
+    // const a = pt3[1] - pt1[1];
+    // const b = pt1[0] - pt3[0];
+    // const c = pt3[0] * pt1[1] - pt1[0] * pt3[1];
+    // const d = Math.sqrt(a * a + b * b);
+    const a = endPt[1] - startPt[1];
+    const b = startPt[0] - endPt[0];
+    const c = endPt[0] * startPt[1] - startPt[0] * endPt[1];
+    const d = Math.sqrt(a * a + b * b);
+    console.log("start pt", pt1);
+    console.log("end pt", pt3);
+
+    const aLocation = gl.getUniformLocation(program!, "u_a");
+    aLocation && gl.uniform1f(aLocation, a);
+    const bLocation = gl.getUniformLocation(program!, "u_b");
+    bLocation && gl.uniform1f(bLocation, b);
+    const cLocation = gl.getUniformLocation(program!, "u_c");
+    cLocation && gl.uniform1f(cLocation, c);
+    const dLocation = gl.getUniformLocation(program!, "u_d");
+    dLocation && gl.uniform1f(dLocation, d);
     const l = Math.floor(postions.length / 3 / 3);
     for (let i = 0; i < l; i++) {
       gl.drawArrays(gl.TRIANGLES, i * 3, 3);
@@ -56,8 +95,8 @@ export function main(gl: WebGL2RenderingContext) {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
     gl.useProgram(program);
-    drawRect(canvasWidth / 2 - 150, canvasHeight / 2 - 150, 100, 100);
-    drawRect(0, 0, 100, 50);
+    drawRect(0, 0, 600, 500);
+    // drawRect(canvasWidth / 2 - 150, canvasHeight / 2 - 150, 100, 100);
   }
   render();
 }
