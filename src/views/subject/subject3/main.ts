@@ -21,69 +21,50 @@ export function main(gl: WebGL2RenderingContext) {
     gl.enableVertexAttribArray(positionAttributeLocation);
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    //
-    const pt1 = [
-      rangeMapping(x, 0, canvasWidth, -1, 1),
-      rangeMapping(y, 0, canvasHeight, 1, -1),
-      0,
+    const leftTopPt = mappingPtToCanvas([x, y, 0], canvasWidth, canvasHeight);
+    const rightTopPt = mappingPtToCanvas(
+      [x + width, y, 0],
+      canvasWidth,
+      canvasHeight
+    );
+    const leftBottomPt = mappingPtToCanvas(
+      [x, y + height, 0],
+      canvasWidth,
+      canvasHeight
+    );
+    const rightBottomPt = mappingPtToCanvas(
+      [x + width, y + height, 0],
+      canvasWidth,
+      canvasHeight
+    );
+
+    const postions = [
+      ...leftTopPt,
+      ...leftBottomPt,
+      ...rightTopPt,
+      ...rightTopPt,
+      ...leftBottomPt,
+      ...rightBottomPt,
     ];
-    const pt2 = [
-      rangeMapping(x + width, 0, canvasWidth, -1, 1),
-      rangeMapping(y, 0, canvasHeight, 1, -1),
-      0,
-    ];
-    const pt3 = [
-      rangeMapping(x, 0, canvasWidth, -1, 1),
-      rangeMapping(y + height, 0, canvasHeight, 1, -1),
-      0,
-    ];
-    const pt4 = [
-      rangeMapping(x + width, 0, canvasWidth, -1, 1),
-      rangeMapping(y + height, 0, canvasHeight, 1, -1),
-      0,
-    ];
-    const postions = [...pt1, ...pt3, ...pt2, ...pt2, ...pt3, ...pt4];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(postions), gl.STATIC_DRAW);
     gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
     //test
     const startColorLocation = gl.getUniformLocation(program!, "u_start_color");
     const endColorLocation = gl.getUniformLocation(program!, "u_end_color");
-    const startColor: [number, number, number] = [
-      Math.random(),
-      Math.random(),
-      Math.random(),
-    ];
-    const endColor: [number, number, number] = [
-      Math.random(),
-      Math.random(),
-      Math.random(),
-    ];
+    const startColor: [number, number, number] = [1, 0, 0];
+    const endColor: [number, number, number] = [0, 1, 0];
     console.log("start color", startColor);
     console.log("end color", endColor);
     gl.uniform3fv(startColorLocation, startColor);
     gl.uniform3fv(endColorLocation, endColor);
-    const startPt = [Math.random() * 2 - 1, Math.random() * 2 - 1, 0];
-    const endPt = [Math.random() * 2 - 1, Math.random() * 2 - 1, 0];
-    // const a = pt3[1] - pt1[1];
-    // const b = pt1[0] - pt3[0];
-    // const c = pt3[0] * pt1[1] - pt1[0] * pt3[1];
-    // const d = Math.sqrt(a * a + b * b);
-    const a = endPt[1] - startPt[1];
-    const b = startPt[0] - endPt[0];
-    const c = endPt[0] * startPt[1] - startPt[0] * endPt[1];
-    const d = Math.sqrt(a * a + b * b);
-    console.log("start pt", pt1);
-    console.log("end pt", pt3);
+    const startPt = leftTopPt;
+    const endPt = rightBottomPt;
+    const startPtLocation = gl.getUniformLocation(program!, "u_start_point");
+    const endPtLocation = gl.getUniformLocation(program!, "u_end_point");
+    gl.uniform3fv(startPtLocation, startPt);
+    gl.uniform3fv(endPtLocation, endPt);
 
-    const aLocation = gl.getUniformLocation(program!, "u_a");
-    aLocation && gl.uniform1f(aLocation, a);
-    const bLocation = gl.getUniformLocation(program!, "u_b");
-    bLocation && gl.uniform1f(bLocation, b);
-    const cLocation = gl.getUniformLocation(program!, "u_c");
-    cLocation && gl.uniform1f(cLocation, c);
-    const dLocation = gl.getUniformLocation(program!, "u_d");
-    dLocation && gl.uniform1f(dLocation, d);
     const l = Math.floor(postions.length / 3 / 3);
     for (let i = 0; i < l; i++) {
       gl.drawArrays(gl.TRIANGLES, i * 3, 3);
@@ -95,10 +76,21 @@ export function main(gl: WebGL2RenderingContext) {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
     gl.useProgram(program);
-    drawRect(0, 0, 600, 500);
+    drawRect(0, 0, 600, 480);
     // drawRect(canvasWidth / 2 - 150, canvasHeight / 2 - 150, 100, 100);
   }
   render();
+  //test
+
+  const line = { start: { x: -1, y: 1 }, end: { x: -1, y: -1 } };
+  const startColor: [number, number, number] = [1, 0, 0];
+  const endColor: [number, number, number] = [0, 1, 0];
+  console.log(
+    "test pt",
+    linearGradientColor({ x: -0.5, y: 0.1 }, line, startColor, endColor),
+    linearGradientColor({ x: -0.1, y: 0.1 }, line, startColor, endColor),
+    linearGradientColor({ x: -0.1, y: 0.3 }, line, startColor, endColor)
+  );
 }
 
 interface LinearGradient {
@@ -121,4 +113,16 @@ function drawLineSegment(
   { points, color, width }: LineSegmentProps
 ) {
   //
+}
+
+function mappingPtToCanvas(
+  pt: ReadonlyVec3,
+  canvasWidth: number,
+  canvasHeight: number
+): ReadonlyVec3 {
+  return [
+    rangeMapping(pt[0], 0, canvasWidth, -1, 1),
+    rangeMapping(pt[1], 0, canvasHeight, 1, -1),
+    rangeMapping(pt[2], 0, 1, 0, 1),
+  ];
 }
