@@ -14,8 +14,8 @@ function initImage(url: string): Promise<HTMLImageElement> {
 interface RenderProps {
   size: { width: number; height: number };
   postion: { x: number; y: number };
-  flipLeftRight?: boolean;
-  flipUpDown?: boolean;
+  flipLeftRight: boolean;
+  flipUpDown: boolean;
 }
 
 let imageTexture: WebGLTexture | null = null;

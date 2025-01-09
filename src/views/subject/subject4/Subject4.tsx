@@ -15,7 +15,7 @@ export default function Subject1(props: Subject1Props) {
     if (props.gl) {
       renderImage(props.gl, {
         size: { width, height },
-        postion: { x: 0, y: 0 },
+        postion: texturePostion,
         flipLeftRight,
         flipUpDown,
       });
