@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Subject3 from "./subject3/Subject3.tsx";
+import Subject4 from "./subject4/Subject4.tsx";
 
 export default function Subject() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,7 +12,7 @@ export default function Subject() {
       <canvas ref={canvasRef} width={600} height={480}>
         your browser do not support canvas
       </canvas>
-      <Subject3 gl={gl} />
+      <Subject4 gl={gl} />
     </>
   );
 }

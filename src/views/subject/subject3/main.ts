@@ -59,7 +59,7 @@ export function main(gl: WebGL2RenderingContext) {
     gl.uniform3fv(startColorLocation, startColor);
     gl.uniform3fv(endColorLocation, endColor);
     const startPt = leftTopPt;
-    const endPt = rightBottomPt;
+    const endPt = leftBottomPt;
     const startPtLocation = gl.getUniformLocation(program!, "u_start_point");
     const endPtLocation = gl.getUniformLocation(program!, "u_end_point");
     gl.uniform3fv(startPtLocation, startPt);
@@ -76,7 +76,7 @@ export function main(gl: WebGL2RenderingContext) {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
     gl.useProgram(program);
-    drawRect(0, 0, 600, 480);
+    drawRect(0, 0, 300, 240);
     // drawRect(canvasWidth / 2 - 150, canvasHeight / 2 - 150, 100, 100);
   }
   render();
@@ -96,23 +96,6 @@ export function main(gl: WebGL2RenderingContext) {
 interface LinearGradient {
   colors: Array<ReadonlyVec3>;
   degree: number;
-}
-interface LineSegmentProps {
-  points: [ReadonlyVec3, ReadonlyVec3];
-  color: ReadonlyVec3 | LinearGradient;
-  width: number;
-}
-
-/**
- * tip y-y1/y2-y1 = x-x1/x2-x1
- * @param gl
- * @param param1
- */
-function drawLineSegment(
-  gl: WebGL2RenderingContext,
-  { points, color, width }: LineSegmentProps
-) {
-  //
 }
 
 function mappingPtToCanvas(
