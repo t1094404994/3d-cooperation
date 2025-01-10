@@ -1,3 +1,6 @@
+import { ReadonlyVec2, mat3 } from "gl-matrix";
+import { initShaderProgram } from "@/util/webgl";
+
 import fsSource from "./fs.frag?raw";
 import vsSource from "./vs.vert?raw";
 import imgUrl from "./sample.png";
@@ -11,9 +14,14 @@ function initImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
-interface RenderProps {
-  size: { width: number; height: number };
-  postion: { x: number; y: number };
+export interface RenderProps {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  scaleX: number;
+  scaleY: number;
+  angle: number;
   flipLeftRight: boolean;
   flipUpDown: boolean;
 }
@@ -87,33 +95,36 @@ export async function renderImage(
   gl.useProgram(program);
 
   //set rect position
-  const originPts: ReadonlyVec3[] = [
-    [props.postion.x, props.postion.y, 0],
-    [props.postion.x + props.size.width, props.postion.y, 0],
-    [props.postion.x, props.postion.y + props.size.height, 0],
-    [
-      props.postion.x + props.size.width,
-      props.postion.y + props.size.height,
-      0,
-    ],
+  const originPts: ReadonlyVec2[] = [
+    [0, 0],
+    [props.width, 0],
+    [0, props.height],
+    [props.width, props.height],
   ];
-  const webglPostions = originPts.map((pt) =>
-    mappingPtToCanvas(pt, canvasWidth, canvasHeight)
-  );
   const triangles: Array<number> = [
-    ...webglPostions[0],
-    ...webglPostions[2],
-    ...webglPostions[1],
-    ...webglPostions[1],
-    ...webglPostions[2],
-    ...webglPostions[3],
+    ...originPts[0],
+    ...originPts[2],
+    ...originPts[1],
+    ...originPts[1],
+    ...originPts[2],
+    ...originPts[3],
   ];
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
   gl.enableVertexAttribArray(positionAttributeLocation);
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangles), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+  gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+  //set transform matrix
+  const resolutionLocation = gl.getUniformLocation(program, "u_matrix");
+  const translation = new Float32Array([props.x, props.y]);
+  const angleInradians = (props.angle * Math.PI) / 180;
+  const scale = new Float32Array([props.scaleX, props.scaleY]);
+  const matrix = mat3.projection(mat3.create(), canvasWidth, canvasHeight);
+  mat3.translate(matrix, matrix, translation);
+  mat3.rotate(matrix, matrix, angleInradians);
+  mat3.scale(matrix, matrix, scale);
+  gl.uniformMatrix3fv(resolutionLocation, false, matrix);
 
   //set texture position mapping
   const texcoordAttributeLocation = gl.getAttribLocation(program, "a_texcoord");
@@ -150,23 +161,8 @@ export async function renderImage(
   );
 
   //draw rect
-  const l = Math.floor(triangles.length / 3 / 3);
+  const l = Math.floor(triangles.length / 3 / 2);
   for (let i = 0; i < l; i++) {
     gl.drawArrays(gl.TRIANGLES, i * 3, 3);
   }
-}
-
-import { ReadonlyVec3 } from "gl-matrix";
-import { rangeMapping } from "@/util/math";
-import { initShaderProgram } from "@/util/webgl";
-function mappingPtToCanvas(
-  pt: ReadonlyVec3,
-  canvasWidth: number,
-  canvasHeight: number
-): ReadonlyVec3 {
-  return [
-    rangeMapping(pt[0], 0, canvasWidth, -1, 1),
-    rangeMapping(pt[1], 0, canvasHeight, 1, -1),
-    rangeMapping(pt[2], 0, 1, 0, 1),
-  ];
 }
