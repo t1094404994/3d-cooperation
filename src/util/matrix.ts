@@ -1,3 +1,5 @@
+import { mat3 } from "gl-matrix";
+
 export type Matrix4 = [
   number,
   number,
@@ -452,3 +454,22 @@ export const V3 = {
     a[2] + b[2],
   ],
 };
+
+interface TransformMat3Props {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  scaleX: number;
+  scaleY: number;
+  angle: number;
+}
+export function initTransformMat3(data: TransformMat3Props) {
+  const { x, y, width, height, scaleX, scaleY, angle } = data;
+  const matrix = mat3.projection(mat3.create(), width, height);
+  mat3.translate(matrix, matrix, [x, y]);
+  const angleInradians = (angle * Math.PI) / 180;
+  mat3.rotate(matrix, matrix, angleInradians);
+  mat3.scale(matrix, matrix, [scaleX, scaleY]);
+  return matrix;
+}

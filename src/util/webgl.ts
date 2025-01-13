@@ -1,3 +1,4 @@
+import { mat3 } from "gl-matrix";
 import {
   ObjectArrays,
   createCubeVertices,
