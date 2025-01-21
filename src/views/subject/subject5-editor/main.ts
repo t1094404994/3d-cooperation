@@ -80,3 +80,40 @@ export async function renderImage(
     gl.drawArrays(gl.TRIANGLES, i * 3, 3);
   }
 }
+
+interface LinearGradientColor {
+  startColor: BaseColorType;
+  endColor: BaseColorType;
+  startPoint: ReadonlyVec2 | "left" | "right" | "top" | "bottom";
+  endPoint: ReadonlyVec2 | "left" | "right" | "top" | "bottom";
+}
+type BaseColorType = string | [number, number, number, number];
+type ColorType = BaseColorType | LinearGradientColor;
+interface RectProps {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: ColorType;
+  scaleX: number;
+  scaleY: number;
+  angle: number;
+  flipLeftRight: boolean;
+  flipUpDown: boolean;
+}
+
+function createRectData(_data: Partial<RectProps>): RectProps {
+  return {
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
+    color: "#ff0000",
+    scaleX: 1,
+    scaleY: 1,
+    angle: 0,
+    flipLeftRight: false,
+    flipUpDown: false,
+    ..._data,
+  };
+}

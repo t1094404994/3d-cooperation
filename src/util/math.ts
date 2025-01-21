@@ -79,3 +79,28 @@ export function pointToLineFootDistanceRatio(
     (line.end.x - line.start.x) ** 2 + (line.end.y - line.start.y) ** 2;
   return Math.sqrt(distancePow2 / lineLengthPow2);
 }
+
+//#ff0000 -> [255, 0, 0, 255]
+export function colorStringToHex(color: string, normalized?: boolean) {
+  //test
+  const reg = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+  if (!reg.test(color)) {
+    throw new Error("color format error");
+  }
+  const result: Array<number> = [];
+  if (color.length === 4) {
+    for (let i = 1; i < color.length; i++) {
+      result.push(parseInt("0x" + color[i] + color[i]));
+    }
+  } else {
+    for (let i = 1; i < color.length; i += 2) {
+      result.push(parseInt("0x" + color[i] + color[i + 1]));
+    }
+  }
+  result.push(255);
+  if (normalized) {
+    return result.map((v) => v / 255);
+  } else {
+    return result;
+  }
+}
